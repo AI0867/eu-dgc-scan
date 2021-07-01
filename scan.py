@@ -58,7 +58,7 @@ while cap.isOpened():
                 # Check json.keys() not in [1,4,6,-260]
                 # Check json[-260].keys() not in 1
                 # Check json[-260][1].keys() not in ['ver','dob','nam','v']
-                print(f"QR code version {about['ver']})")
+                print(f"QR code version {about['ver']}")
                 # Check json[-260][1]['nam'] not in ['gn', 'gnt', 'fn', 'fnt']
                 print(f"For {about['nam']['gn']} {about['nam']['fn']} AKA {about['nam']['gnt']} {about['nam']['fnt']} born on {about['dob']}")
                 print(f"We found {len(about['v'])} vaccinations:")

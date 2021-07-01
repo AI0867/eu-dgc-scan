@@ -5,6 +5,7 @@ import cbor
 import cose.messages
 import cv2
 import pyzbar.pyzbar
+import sys
 
 go_grey = False
 
@@ -16,6 +17,8 @@ cap.open(0)
 
 known_codes = set()
 
+verbose = len(sys.argv) > 1 and sys.argv[1] == '-v'
+
 while cap.isOpened():
     success, img = cap.read()
     if success:
@@ -23,7 +26,8 @@ while cap.isOpened():
             img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         codes = pyzbar.pyzbar.decode(img)
         for decoded_code in codes:
-            print(decoded_code)
+            if verbose:
+                print(decoded_code)
             # Stuff about visualization
             if len(decoded_code.polygon) > 4:
                 reduced = numpy.squeeze(cv2.convexHull(numpy.array(decoded_code.polygon)))
@@ -37,14 +41,18 @@ while cap.isOpened():
             code = decoded_code.data
             if code not in known_codes:
                 known_codes.add(code)
-                print(f"Found QR code: {code}")
+                if verbose:
+                    print(f"Found QR code: {code}")
                 b45 = base45.b45decode(code[4:])
-                print(f"Base45 decoded: {b45}")
+                if verbose:
+                    print(f"Base45 decoded: {b45}")
                 cosemsg = cose.messages.Sign1Message.decode(b45[7:])
-                print(f"COSE message: {cosemsg}")
-                print(f"Payload: {cosemsg.payload}")
+                if verbose:
+                    print(f"COSE message: {cosemsg}")
+                    print(f"Payload: {cosemsg.payload}")
                 json = cbor.loads(cosemsg.payload)
-                print(f"CBOR decoded: {json}")
+                if verbose:
+                    print(f"CBOR decoded: {json}")
                 print(f"Country: {json[1]}")
                 about = json[-260][1]
                 # Check json.keys() not in [1,4,6,-260]

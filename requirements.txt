@@ -1,0 +1,5 @@
+base45
+cbor
+cose
+opencv-python
+pyzbar

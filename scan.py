@@ -55,11 +55,19 @@ while cap.isOpened():
                     print(f"CBOR decoded: {json}")
                 print(f"Country: {json[1]}")
                 about = json[-260][1]
-                # Check json.keys() not in [1,4,6,-260]
-                # Check json[-260].keys() not in 1
-                # Check json[-260][1].keys() not in ['ver','dob','nam','v']
+                for key in json.keys():
+                    if key not in [1,4,6,-260]:
+                        print(f"Unknown key found in CBOR: {key}, value: {json[key]}")
+                for key in json[-260].keys():
+                    if key not in [1]:
+                        print(f"Unknown key found in CBOR[-260]: {key}, value: {json[-260][key]}")
+                for key in json[-260][1].keys():
+                    if key not in ['ver','dob','nam','v']:
+                        print(f"Unknown key found in CBOR[-260][1]: {key}, value: {json[-260][1][key]}")
                 print(f"QR code version {about['ver']}")
-                # Check json[-260][1]['nam'] not in ['gn', 'gnt', 'fn', 'fnt']
+                for key in json[-260][1]['nam']:
+                    if key not in ['gn', 'gnt', 'fn', 'fnt']:
+                        print(f"Unknown key found in CBOR[-260][1]['nam']: {key}, value: {json[-260][1]['nam'][key]}")
                 print(f"For {about['nam']['gn']} {about['nam']['fn']} AKA {about['nam']['gnt']} {about['nam']['fnt']} born on {about['dob']}")
                 print(f"We found {len(about['v'])} vaccinations:")
                 for i, vac in enumerate(about['v']):

@@ -7,6 +7,13 @@ import cv2
 import pyzbar.pyzbar
 import sys
 
+MA_MAP = {
+    'ORG-100030215'     : 'Pfizer',
+}
+MP_MAP = {
+    'EU/1/20/1528'      : 'Comirnaty',
+}
+
 go_grey = False
 
 cap = cv2.VideoCapture(0)
@@ -71,11 +78,14 @@ while cap.isOpened():
                 print(f"For {about['nam']['gn']} {about['nam']['fn']} AKA {about['nam']['gnt']} {about['nam']['fnt']} born on {about['dob']}")
                 print(f"We found {len(about['v'])} vaccinations:")
                 for i, vac in enumerate(about['v']):
-                    # Check vac.keys() not in ['tg', 'vp', 'mp', 'ma', 'dn', 'sd', 'dt', 'co', 'is', 'ci']
-                    # TODO map 'ma' -> manufacturer
-                    # TODO map 'mp' -> vaccine
+                    for key in vac.keys():
+                        if key not in ['tg', 'vp', 'mp', 'ma', 'dn', 'sd', 'dt', 'co', 'is', 'ci']:
+                            print(f"Unknown key found in vaccination: {key}, value: {vac[key]}")
+                    manufacturer = f"{MA_MAP[vac['ma']]} ({vac['ma']})" if vac['ma'] in MA_MAP else vac['ma']
+                    vaccine = f"{MP_MAP[vac['mp']]} ({vac['mp']})" if vac['mp'] in MP_MAP else vac['mp']
                     # TODO check meaning of rest
-                    print(f"{i+1}: On {vac['dt']}, you received {vac['mp']} made by {vac['ma']} from {vac['is']} in {vac['co']}")
+                    print(f"{i+1}: On {vac['dt']}, you received {vaccine} made by {manufacturer} from {vac['is']} in {vac['co']}")
+                    # TODO: tg, vp, dn, sd, ci
     cv2.imshow('frame', img)
     key = cv2.waitKey(1)
     if key & 0xFF == ord('q'):

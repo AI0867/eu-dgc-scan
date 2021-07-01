@@ -6,6 +6,8 @@ import cose.messages
 import cv2
 import pyzbar.pyzbar
 
+go_grey = False
+
 cap = cv2.VideoCapture(0)
 cap.set(3,640)
 cap.set(4,480)
@@ -17,6 +19,8 @@ known_codes = set()
 while cap.isOpened():
     success, img = cap.read()
     if success:
+        if go_grey:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         codes = pyzbar.pyzbar.decode(img)
         for decoded_code in codes:
             print(decoded_code)
@@ -60,6 +64,8 @@ while cap.isOpened():
     key = cv2.waitKey(1)
     if key & 0xFF == ord('q'):
         break
+    elif key & 0xFF == ord(' '):
+        go_grey = not go_grey
 
 cap.release()
 cv2.destroyAllWindows()

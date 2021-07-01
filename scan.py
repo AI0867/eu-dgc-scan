@@ -39,7 +39,7 @@ while cap.isOpened():
                 print(f"QR code version {about['ver']})")
                 # Check json[-260][1]['nam'] not in ['gn', 'gnt', 'fn', 'fnt']
                 print(f"For {about['nam']['gn']} {about['nam']['fn']} AKA {about['nam']['gnt']} {about['nam']['fnt']} born on {about['dob']}")
-                print(f"We found {len(about['v']} vaccinations:")
+                print(f"We found {len(about['v'])} vaccinations:")
                 for i, vac in enumerate(about['v']):
                     # Check vac.keys() not in ['tg', 'vp', 'mp', 'ma', 'dn', 'sd', 'dt', 'co', 'is', 'ci']
                     # TODO map 'ma' -> manufacturer

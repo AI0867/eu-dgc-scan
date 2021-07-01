@@ -20,9 +20,19 @@ while cap.isOpened():
         codes = pyzbar.pyzbar.decode(img)
         for decoded_code in codes:
             print(decoded_code)
-            # Rest of code is mainly about where in the image
+            # Stuff about visualization
+            if len(decoded_code.polygon) > 4:
+                reduced = numpy.squeeze(cv2.convexHull(numpy.array(decoded_code.polygon)))
+                [tuple(point) for point in reduced]
+            else:
+                hull = decoded_code.polygon
+            for vertex in range(len(hull)):
+                cv2.line(img, hull[vertex], hull[(vertex + 1) % len(hull)], (255, 0, 0), 3)
+
+            # Stuff about decoding
             code = decoded_code.data
             if code not in known_codes:
+                known_codes.add(code)
                 print(f"Found QR code: {code}")
                 b45 = base45.b45decode(code[4:])
                 print(f"Base45 decoded: {b45}")
@@ -46,3 +56,10 @@ while cap.isOpened():
                     # TODO map 'mp' -> vaccine
                     # TODO check meaning of rest
                     print(f"{i+1}: On {vac['dt']}, you received {vac['mp']} made by {vac['ma']} from {vac['is']} in {vac['co']}")
+    cv2.imshow('frame', img)
+    key = cv2.waitKey(1)
+    if key & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
